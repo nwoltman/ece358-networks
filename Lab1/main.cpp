@@ -48,7 +48,7 @@ int Simulation::markovianTime() {
     double u = (double) rand() / RAND_MAX;
     double x = (-log(1 - u)) / lambda;
     x *= TICKS_PER_SECOND;
-    return x;
+    return round(x);
 }
 
 void Simulation::arrival() {
