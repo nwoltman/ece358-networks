@@ -6,7 +6,7 @@
 #include <vector>
 using namespace std;
 
-#define MILLION 1000000
+#define TICKS_PER_SECOND 1000000
 
 class Simulation {
   private:
@@ -41,7 +41,7 @@ class Simulation {
 Simulation::Simulation(int n_, int lambda_, int L_, int C_, int K_)
   : n(n_), lambda(lambda_), L(L_), C(C_), K(K_)
 {
-    serviceTime = (L * MILLION) / C;
+    serviceTime = (L * TICKS_PER_SECOND) / C;
     currTick = 0;
     srand(time(0));
     createPacket();
@@ -50,7 +50,7 @@ Simulation::Simulation(int n_, int lambda_, int L_, int C_, int K_)
 void Simulation::createPacket() {
     double u = (double) rand() / RAND_MAX;
     double x = (-log(1 - u)) / lambda;
-    x *= MILLION;
+    x *= TICKS_PER_SECOND;
     nextPacket.waitTime = x;
     totalPackets++;
 }
