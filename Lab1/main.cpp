@@ -99,9 +99,7 @@ double Simulation::getEN() {
     for (int i = 0; i < numberOfPackets.size(); i++) {
         sum += numberOfPackets.at(i);
     }
-    double avg = sum;
-    avg /= numberOfPackets.size();
-    return avg;
+    return (double) sum / numberOfPackets.size();
 }
 
 double Simulation::getET() {
@@ -109,21 +107,15 @@ double Simulation::getET() {
     for (int i = 0; i < sojournTimes.size(); i++) {
         sum += sojournTimes.at(i);
     }
-    double avg = sum;
-    avg /= sojournTimes.size();
-    return avg;
+    return (double) sum / sojournTimes.size();
 }
 
 double Simulation::getPIdle() {
-    double avg = idleTicks;
-    avg /= n;
-    return avg;
+    return (double) idleTicks / n;
 }
 
 double Simulation::getPLoss() {
-    double avg = droppedPackets;
-    avg /= totalPackets;
-    return avg;
+    return (double) droppedPackets / totalPackets;
 }
 
 void Simulation::computePerformances() {
