@@ -12,22 +12,20 @@ class Simulation {
   private:
     struct Packet {
         int arriveTime;
-        int waitTime;
         int remainingServiceTime;
+        Packet(int arrive, int serviceTime) : arriveTime(arrive), remainingServiceTime(serviceTime) { }
     };
     int n, lambda, L, C, K;
     int serviceTime;
     int currTick;
     int droppedPackets, totalPackets;
     queue<Packet> buffer;
-    Packet nextPacket;
     vector <int> numberOfPackets;
     vector <int> sojournTimes;
     int idleTicks;
+    int markovianTime();
     void arrival();
     void departure();
-    void createPacket();
-    void addPacket();
   public:
     Simulation(int n, int lambda, int L, int C, int K = -1);
     void startSimulation();
@@ -44,40 +42,23 @@ Simulation::Simulation(int n_, int lambda_, int L_, int C_, int K_)
     serviceTime = (L * TICKS_PER_SECOND) / C;
     currTick = 0;
     srand(time(0));
-    createPacket();
 }
 
-void Simulation::createPacket() {
+int Simulation::markovianTime() {
     double u = (double) rand() / RAND_MAX;
     double x = (-log(1 - u)) / lambda;
     x *= TICKS_PER_SECOND;
-    nextPacket.waitTime = x;
-    totalPackets++;
+    return x;
 }
 
-void Simulation::addPacket() {
+void Simulation::arrival() {
+    totalPackets++;
     if (buffer.size() == (size_t) K) {
         droppedPackets++;
         return;
     }
-    nextPacket.arriveTime = currTick;
-    nextPacket.remainingServiceTime = serviceTime;
-    buffer.push(nextPacket);
-}
-
-void Simulation::startSimulation() {
-    for (currTick = 1; currTick <= n; currTick++) {
-        arrival();
-        departure();
-    }
-}
-
-void Simulation::arrival() {
-    nextPacket.waitTime--;
-    if (nextPacket.waitTime == 0) {
-        addPacket();
-        createPacket();
-    }
+    Packet packet(currTick, serviceTime);
+    buffer.push(packet);
 }
 
 void Simulation::departure() {
@@ -93,6 +74,17 @@ void Simulation::departure() {
     }
 }
 
+void Simulation::startSimulation() {
+    int timeUntilNextPacket = markovianTime();
+    for (currTick = 1; currTick <= n; currTick++) {
+        timeUntilNextPacket--;
+        if (timeUntilNextPacket <= 0) {
+            arrival();
+            timeUntilNextPacket = markovianTime();
+        }
+        departure();
+    }
+}
 
 double Simulation::getEN() {
     long sum = 0;
