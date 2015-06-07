@@ -9,7 +9,7 @@ make
 ## Usage
 
 ```sh
-sim n lambda L C [ K ]
+./sim n lambda L C [ K ]
 ```
 
 Examples:
