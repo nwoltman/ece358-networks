@@ -1,6 +1,7 @@
 # Compiled Object files
 *.slo
 *.lo
+*.d
 *.o
 *.obj
 
@@ -26,3 +27,4 @@
 *.exe
 *.out
 *.app
+Lab1/sim

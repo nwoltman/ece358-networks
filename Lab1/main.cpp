@@ -1,12 +1,14 @@
+#include <cmath>
+#include <cstdlib>
+#include <ctime>
 #include <iostream>
 #include <queue>
 #include <vector>
-#include <time.h>
-#include <math.h>
+using namespace std;
+
 #define TYPE_INFINITE 1
 #define TYPE_K 2
 #define MILLION 1000000
-using namespace std;
 
 class Simulation {
 private:
@@ -27,7 +29,7 @@ private:
 	void Departure ();
 	void CreatePacket();
 	void AddPacket();
-public: 
+public:
 	Simulation();
 	void startSimulation ();
 	void computePerformances();
@@ -47,7 +49,7 @@ Simulation::Simulation() {
 		cout << "Enter simulation length, n\n";
 		cin >> n;
 		cout << "Enter average number of packets, lambda\n";
-		cin >> lambda;	
+		cin >> lambda;
 		cout << "Enter packet length, L\n";
 		cin >> L;
 		cout << "Enter transmission rate, C\n";
@@ -58,7 +60,7 @@ Simulation::Simulation() {
 		}
 		serviceTime = (L * MILLION) / C;
 		currTick = 0;
-		srand(std::time(0));
+		srand(time(0));
 		CreatePacket();
 }
 
