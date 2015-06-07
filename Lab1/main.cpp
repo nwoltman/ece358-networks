@@ -56,12 +56,12 @@ void Simulation::createPacket() {
 }
 
 void Simulation::addPacket() {
-    nextPacket.arriveTime = currTick;
-    nextPacket.remainingServiceTime = serviceTime;
     if (buffer.size() == K) {
         droppedPackets++;
         return;
     }
+    nextPacket.arriveTime = currTick;
+    nextPacket.remainingServiceTime = serviceTime;
     buffer.push(nextPacket);
 }
 
