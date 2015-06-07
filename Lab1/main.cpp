@@ -6,8 +6,6 @@
 #include <vector>
 using namespace std;
 
-#define TYPE_INFINITE 1
-#define TYPE_K 2
 #define MILLION 1000000
 
 class Simulation {
@@ -17,7 +15,7 @@ class Simulation {
         int waitTime;
         int remainingServiceTime;
     };
-    int n, lambda, L, C, K, queueType;
+    int n, lambda, L, C, K;
     int serviceTime;
     int currTick, droppedPacks, totalPacks;
     queue<Packet> buffer;
@@ -30,7 +28,7 @@ class Simulation {
     void CreatePacket();
     void AddPacket();
   public:
-    Simulation();
+    Simulation(int n, int lambda, int L, int C, int K = -1);
     void startSimulation ();
     void computePerformances();
     double getEN();
@@ -39,29 +37,13 @@ class Simulation {
     double getPloss();
 };
 
-Simulation::Simulation() {
-        do {
-            cout << "Enter "<<TYPE_INFINITE<<" for M/D/1 queue, "<<TYPE_K<<" for M/D/1/K queue\n";
-            cin >> queueType;
-            if ((queueType != TYPE_INFINITE) && (queueType != TYPE_K))
-                cout << "Invalid input\n";
-        } while ((queueType != TYPE_INFINITE) && (queueType != TYPE_K));
-        cout << "Enter simulation length, n\n";
-        cin >> n;
-        cout << "Enter average number of packets, lambda\n";
-        cin >> lambda;
-        cout << "Enter packet length, L\n";
-        cin >> L;
-        cout << "Enter transmission rate, C\n";
-        cin >> C;
-        if (queueType == TYPE_K) {
-            cout << "Enter buffer size, K\n";
-            cin >> K;
-        }
-        serviceTime = (L * MILLION) / C;
-        currTick = 0;
-        srand(time(0));
-        CreatePacket();
+Simulation::Simulation(int n_, int lambda_, int L_, int C_, int K_)
+  : n(n_), lambda(lambda_), L(L_), C(C_), K(K_)
+{
+    serviceTime = (L * MILLION) / C;
+    currTick = 0;
+    srand(time(0));
+    CreatePacket();
 }
 
 void Simulation::CreatePacket() {
@@ -75,11 +57,11 @@ void Simulation::CreatePacket() {
 void Simulation::AddPacket() {
     nextPacket.arriveTime = currTick;
     nextPacket.remainingServiceTime = serviceTime;
-    if ((queueType == TYPE_INFINITE) || (buffer.size() < K)) {
-        buffer.push(nextPacket);
+    if (buffer.size() == K) {
+        droppedPacks++;
         return;
     }
-    droppedPacks++;
+    buffer.push(nextPacket);
 }
 
 void Simulation::startSimulation() {
@@ -112,7 +94,7 @@ void Simulation::Departure() {
 
 
 double Simulation::getEN() {
-    long  sum = 0;
+    long sum = 0;
     for (int i = 0; i < numberOfPackets.size(); i++) {
         sum += numberOfPackets.at(i);
     }
@@ -147,14 +129,30 @@ void Simulation::computePerformances() {
     cout << "E[N] = " << getEN() << endl;
     cout << "E[T] = " << getET() << endl;
     cout << "P_idle = " << getPidle() << endl;
-    if (queueType == TYPE_K) {
+    if (K > -1) {
         cout << "P_loss = " << getPloss() << endl;
     }
 }
 
-int main() {
-    Simulation x;
-    x.startSimulation();
-    x.computePerformances();
+int main(int argc, char* argv[]) {
+    if (argc != 5 && argc != 6) {
+        cerr << "Usage: " << argv[0] << " n lambda L C [ K ]" << endl;
+        exit(EXIT_FAILURE);
+    }
+
+    int n = atoi(argv[1]);
+    int lambda = atoi(argv[2]);
+    int L = atoi(argv[3]);
+    int C = atoi(argv[4]);
+    int K = -1;
+
+    if (argc == 6) {
+        K = atoi(argv[5]);
+    }
+
+    Simulation simulation(n, lambda, L, C, K);
+    simulation.startSimulation();
+    simulation.computePerformances();
+
     return 0;
 }
