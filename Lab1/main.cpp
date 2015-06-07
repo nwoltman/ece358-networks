@@ -56,7 +56,7 @@ void Simulation::createPacket() {
 }
 
 void Simulation::addPacket() {
-    if (buffer.size() == K) {
+    if (buffer.size() == (size_t) K) {
         droppedPackets++;
         return;
     }
@@ -96,7 +96,7 @@ void Simulation::departure() {
 
 double Simulation::getEN() {
     long sum = 0;
-    for (int i = 0; i < numberOfPackets.size(); i++) {
+    for (size_t i = 0; i < numberOfPackets.size(); i++) {
         sum += numberOfPackets.at(i);
     }
     return (double) sum / numberOfPackets.size();
@@ -104,7 +104,7 @@ double Simulation::getEN() {
 
 double Simulation::getET() {
     long sum = 0;
-    for (int i = 0; i < sojournTimes.size(); i++) {
+    for (size_t i = 0; i < sojournTimes.size(); i++) {
         sum += sojournTimes.at(i);
     }
     return (double) sum / sojournTimes.size();

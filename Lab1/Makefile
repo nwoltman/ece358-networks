@@ -1,5 +1,5 @@
 CXX = g++
-CXXFLAGS = -O2 -MMD
+CXXFLAGS = -O2 -MMD -Wall
 OBJECTS = main.o
 DEPENDS = $(OBJECTS:.o=.d)
 EXEC = sim
