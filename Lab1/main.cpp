@@ -17,7 +17,8 @@ class Simulation {
     };
     int n, lambda, L, C, K;
     int serviceTime;
-    int currTick, droppedPacks, totalPacks;
+    int currTick;
+    int droppedPackets, totalPackets;
     queue<Packet> buffer;
     Packet nextPacket;
     vector <int> numberOfPackets;
@@ -47,18 +48,18 @@ Simulation::Simulation(int n_, int lambda_, int L_, int C_, int K_)
 }
 
 void Simulation::createPacket() {
-    double x = ((double) rand() / (RAND_MAX));
-    x = (-log(x)) / (double) lambda;
+    double u = (double) rand() / RAND_MAX;
+    double x = (-log(1 - u)) / lambda;
     x *= MILLION;
     nextPacket.waitTime = x;
-    totalPacks++;
+    totalPackets++;
 }
 
 void Simulation::addPacket() {
     nextPacket.arriveTime = currTick;
     nextPacket.remainingServiceTime = serviceTime;
     if (buffer.size() == K) {
-        droppedPacks++;
+        droppedPackets++;
         return;
     }
     buffer.push(nextPacket);
@@ -120,8 +121,8 @@ double Simulation::getPIdle() {
 }
 
 double Simulation::getPLoss() {
-    double avg = droppedPacks;
-    avg /= totalPacks;
+    double avg = droppedPackets;
+    avg /= totalPackets;
     return avg;
 }
 
