@@ -23,18 +23,18 @@ class Simulation {
     vector <int> numberOfPackets;
     vector <int> sojournTimes;
     int idleTicks;
-    void Arrival ();
-    void Departure ();
-    void CreatePacket();
-    void AddPacket();
+    void arrival();
+    void departure();
+    void createPacket();
+    void addPacket();
   public:
     Simulation(int n, int lambda, int L, int C, int K = -1);
-    void startSimulation ();
+    void startSimulation();
     void computePerformances();
     double getEN();
     double getET();
-    double getPidle();
-    double getPloss();
+    double getPIdle();
+    double getPLoss();
 };
 
 Simulation::Simulation(int n_, int lambda_, int L_, int C_, int K_)
@@ -43,10 +43,10 @@ Simulation::Simulation(int n_, int lambda_, int L_, int C_, int K_)
     serviceTime = (L * MILLION) / C;
     currTick = 0;
     srand(time(0));
-    CreatePacket();
+    createPacket();
 }
 
-void Simulation::CreatePacket() {
+void Simulation::createPacket() {
     double x = ((double) rand() / (RAND_MAX));
     x = (-log(x)) / (double) lambda;
     x *= MILLION;
@@ -54,7 +54,7 @@ void Simulation::CreatePacket() {
     totalPacks++;
 }
 
-void Simulation::AddPacket() {
+void Simulation::addPacket() {
     nextPacket.arriveTime = currTick;
     nextPacket.remainingServiceTime = serviceTime;
     if (buffer.size() == K) {
@@ -66,20 +66,20 @@ void Simulation::AddPacket() {
 
 void Simulation::startSimulation() {
     for (currTick = 1; currTick <= n; currTick++) {
-        Arrival();
-        Departure();
+        arrival();
+        departure();
     }
 }
 
-void Simulation::Arrival() {
+void Simulation::arrival() {
     nextPacket.waitTime--;
     if (nextPacket.waitTime == 0) {
-        AddPacket();
-        CreatePacket();
+        addPacket();
+        createPacket();
     }
 }
 
-void Simulation::Departure() {
+void Simulation::departure() {
     numberOfPackets.push_back(buffer.size());
     if (buffer.empty()) {
         idleTicks++;
@@ -113,13 +113,13 @@ double Simulation::getET() {
     return avg;
 }
 
-double Simulation::getPidle() {
+double Simulation::getPIdle() {
     double avg = idleTicks;
     avg /= n;
     return avg;
 }
 
-double Simulation::getPloss() {
+double Simulation::getPLoss() {
     double avg = droppedPacks;
     avg /= totalPacks;
     return avg;
@@ -128,9 +128,9 @@ double Simulation::getPloss() {
 void Simulation::computePerformances() {
     cout << "E[N] = " << getEN() << endl;
     cout << "E[T] = " << getET() << endl;
-    cout << "P_idle = " << getPidle() << endl;
+    cout << "P_idle = " << getPIdle() << endl;
     if (K > -1) {
-        cout << "P_loss = " << getPloss() << endl;
+        cout << "P_loss = " << getPLoss() << endl;
     }
 }
 
