@@ -20,8 +20,8 @@ class Simulation {
     int currTick;
     int droppedPackets, totalPackets;
     queue<Packet> buffer;
-    vector <int> numberOfPackets;
-    vector <int> sojournTimes;
+    vector<int> numberOfPackets;
+    vector<int> sojournTimes;
     int idleTicks;
     int markovianTime();
     void arrival();
