@@ -41,6 +41,7 @@ Simulation::Simulation(int n_, int lambda_, int L_, int C_, int K_)
 {
     serviceTime = (L * TICKS_PER_SECOND) / C;
     currTick = 0;
+    idleTicks = 0;
     srand(time(0));
 }
 
