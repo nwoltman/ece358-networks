@@ -302,7 +302,9 @@ int main(int argc, char* argv[]) {
     int L = atoi(argv[5]);
     float P = atof(argv[6]);
 
-    Simulation simulation(T, N, A, W, L, P);
+   	srand(time(NULL)); // seed your rand so that rand() is random
+
+	  Simulation simulation(T, N, A, W, L, P);
     simulation.startSimulation();
     simulation.computePerformances();
 
