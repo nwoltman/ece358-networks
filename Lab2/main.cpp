@@ -30,6 +30,7 @@ public:
             jammingTime = 0;
             waitingTime = 0;
             totalDelay = 0;
+			state = IDLE;
             transmittedPackets = 0;
             sensingTimeReset();
             nextPacket = getTimeInterval();
