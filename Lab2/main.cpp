@@ -58,8 +58,7 @@ protected:
 
 int Station::getTimeInterval() {
     double u = (double) rand() / (double) RAND_MAX;
-    double x = -arrivalRate * log(1 - u);
-    x = 1/x;
+    double x = -1 / ((double) arrivalRate) * log(1 - u);
     x *= TICKS_PER_SECOND;
     return round(x);
 }
@@ -301,8 +300,6 @@ int main(int argc, char* argv[]) {
     int W = atoi(argv[4]);
     int L = atoi(argv[5]);
     float P = atof(argv[6]);
-
-   	srand(time(NULL)); // seed your rand so that rand() is random
 
 	  Simulation simulation(T, N, A, W, L, P);
     simulation.startSimulation();
