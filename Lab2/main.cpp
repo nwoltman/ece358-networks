@@ -275,17 +275,18 @@ void Simulation::startSimulation() {
 }
 
 void Simulation::computePerformances() {
-    double packs = 0, delay = 0;
+    double packs = 0/*, delay = 0*/;
+    unsigned long long delay = 0;
     for(int i = 0; i < N; i++) {
         packs += stations.at(i)->getTransmittedPackets();
         delay += stations.at(i)->getTotalDelay();
     }
-    delay /= TICKS_PER_SECOND;
-    delay /= packs;
+    double xdelay = delay / TICKS_PER_SECOND;
+    xdelay /= packs;
     packs /= T;
 
     cout << "Throughput = " << packs << " packets per second" << endl;
-    cout << "Avg delay = " << delay << " seconds per packet" << endl;
+    cout << "Avg delay = " << xdelay << " seconds per packet" << endl;
 }
 
 int main(int argc, char* argv[]) {
