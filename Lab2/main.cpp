@@ -5,7 +5,7 @@
 #include <vector>
 using namespace std;
 
-#define TICKS_PER_SECOND 1000000
+#define TICKS_PER_SECOND 100000
 #define NUMBER_OF_ATTEMPTS 10
 
 int busyCounter = 0;
@@ -13,7 +13,7 @@ int busyCounter = 0;
 struct Packet {
     int attempts;
     int remainingServiceTime;
-    int delayTime;
+    double delayTime;
     Packet(int serviceTime) : remainingServiceTime(serviceTime), attempts(0), delayTime(0) { }
 };
 
@@ -275,18 +275,17 @@ void Simulation::startSimulation() {
 }
 
 void Simulation::computePerformances() {
-    double packs = 0/*, delay = 0*/;
-    unsigned long long delay = 0;
-    for(int i = 0; i < N; i++) {
-        packs += stations.at(i)->getTransmittedPackets();
-        delay += stations.at(i)->getTotalDelay();
-    }
-    double xdelay = delay / TICKS_PER_SECOND;
-    xdelay /= packs;
-    packs /= T;
+	double packs = 0, delay = 0;
+	for (int i = 0; i < N; i++) {
+		packs += stations.at(i)->getTransmittedPackets();
+		delay += stations.at(i)->getTotalDelay();
+	}
+	delay /= TICKS_PER_SECOND;
+	delay /= packs;
+	packs /= T;
 
-    cout << "Throughput = " << packs << " packets per second" << endl;
-    cout << "Avg delay = " << xdelay << " seconds per packet" << endl;
+	cout << "Throughput = " << packs << " packets per second" << endl;
+	cout << "Avg delay = " << delay << " seconds per packet" << endl;
 }
 
 int main(int argc, char* argv[]) {
