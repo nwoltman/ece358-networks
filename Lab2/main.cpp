@@ -11,8 +11,8 @@ using namespace std;
 int busyCounter = 0;
 
 struct Packet {
-    int attempts;
     int remainingServiceTime;
+    int attempts;
     double delayTime;
     Packet(int serviceTime) : remainingServiceTime(serviceTime), attempts(0), delayTime(0) { }
 };
@@ -40,8 +40,8 @@ protected:
     int packetTime;
     int jammingTime;
     int waitingTime;
-    int lanSpeed;
     int arrivalRate;
+    int lanSpeed;
     int nextPacket;
     int sensingTime;
     int transmittedPackets;
@@ -112,7 +112,7 @@ void Station::UpdateSimulation() {
         buffer.push_back(p);
         nextPacket = getTimeInterval();
     }
-    for (int i = 0; i < buffer.size(); i++)
+    for (size_t i = 0; i < buffer.size(); i++)
         buffer.at(i).delayTime++;
     switch(state) {
         case IDLE: {
