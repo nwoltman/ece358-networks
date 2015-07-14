@@ -3,6 +3,7 @@
 #include <ctime>
 #include <iostream>
 #include <vector>
+#include <stdio.h>
 using namespace std;
 
 #define TICKS_PER_SECOND 1000000
@@ -13,7 +14,7 @@ int busyCounter = 0;
 struct Packet {
     int attempts;
     int remainingServiceTime;
-    int delayTime;
+    unsigned long long int delayTime;
     Packet(int serviceTime) : remainingServiceTime(serviceTime), attempts(0), delayTime(0) { }
 };
 
@@ -22,8 +23,8 @@ public:
         void UpdateSimulation();
         virtual void busyChannel() = 0;
         virtual void emptyChannel() = 0;
-        int getTransmittedPackets();
-        int getTotalDelay();
+        unsigned long long int getTransmittedPackets();
+        unsigned long long int getTotalDelay();
         Station(int A, int W, int L) : arrivalRate(A), lanSpeed(W) {
             //packetTime, in ticks, assuming W is in Mbps
             packetTime = (8 * L) / lanSpeed;
@@ -37,15 +38,15 @@ public:
         }
 protected:
     vector<Packet> buffer;
-    int packetTime;
-    int jammingTime;
-    int waitingTime;
-    int lanSpeed;
-    int arrivalRate;
-    int nextPacket;
-    int sensingTime;
-    int transmittedPackets;
-    int totalDelay;
+    unsigned long long int packetTime;
+    unsigned long long int jammingTime;
+    unsigned long long int waitingTime;
+    unsigned long long int lanSpeed;
+    unsigned long long int arrivalRate;
+    unsigned long long int nextPacket;
+    unsigned long long int sensingTime;
+    unsigned long long int transmittedPackets;
+    unsigned long long int totalDelay;
     void sensingTimeReset();
     void jammingTimeReset();
     void waitingTimeReset(int r);
@@ -78,11 +79,11 @@ void Station::waitingTimeReset(int r) {
     waitingTime = (512 * r) / lanSpeed;
 }
 
-int Station::getTransmittedPackets() {
+unsigned long long int Station::getTransmittedPackets() {
     return transmittedPackets;
 }
 
-int Station::getTotalDelay() {
+unsigned long long int Station::getTotalDelay() {
     return totalDelay;
 }
 
@@ -106,15 +107,21 @@ void Station::backoff() {
 }
 
 void Station::UpdateSimulation() {
-    nextPacket--;
-    if(nextPacket == 0) {
+    
+		nextPacket--;
+	  
+		if(nextPacket == 0) {
         Packet p(packetTime);
         buffer.push_back(p);
         nextPacket = getTimeInterval();
-    }
-    for (int i = 0; i < buffer.size(); i++)
+		}
+    
+		for (int i = 0; i < buffer.size(); i++) {
         buffer.at(i).delayTime++;
-    switch(state) {
+
+		}
+		
+		switch(state) {
         case IDLE: {
             if(!buffer.empty())
                 state = SENSING;
@@ -138,7 +145,10 @@ void Station::UpdateSimulation() {
                 busyCounter--;
                 resetState();
                 transmittedPackets++;
-                totalDelay += buffer.front().delayTime;
+                if (buffer.front().delayTime < 0)
+									printf("OF");
+								
+								totalDelay += buffer.front().delayTime;
                 buffer.erase(buffer.begin());
 
             }
@@ -268,7 +278,7 @@ Simulation::Simulation(int T_, int N_, int A_, int W_, int L_, float P_)
 }
 
 void Simulation::startSimulation() {
-    for (int currTick = 1; currTick <= T * TICKS_PER_SECOND; currTick++) {
+    for (unsigned long long int currTick = 1; currTick <= T * TICKS_PER_SECOND; currTick++) {
         for (int i = 0; i < N; i++)
             stations.at(i)->UpdateSimulation();
     }
@@ -279,6 +289,8 @@ void Simulation::computePerformances() {
     for(int i = 0; i < N; i++) {
         packs += stations.at(i)->getTransmittedPackets();
         delay += stations.at(i)->getTotalDelay();
+				if (stations.at(i)->getTotalDelay() < 0)
+					printf("%d OF\n", i);
     }
     delay /= TICKS_PER_SECOND;
     delay /= packs;
